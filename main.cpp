@@ -1,111 +1,95 @@
 #include <graphics.h>
 #include<iostream>
-#include "CustomGraphics.h"
 
 using namespace std;
 
-void animatedLine(int X0, int Y0, int X1, int Y1,int delayTime=0, int color=0)
-{
+/** COLORS **/
 
-    int dx = X1 - X0;
-    int dy = Y1 - Y0;
+struct Color { int r,g,b; };
 
+Color white = {255,255,255};
+Color desk_space = {238,239,240};
+Color bg = {243,205,162};
+Color lap_outscr = {23,40,53};
+Color lap_innscr = {0,204,167};
+Color lap_keyboard = {246,240,223};
+Color lap_shadow = {77,31,18};
+Color frame_out = lap_outscr;
+Color frame_1 = {246,109,102};
+Color frame_2 = frame_1;
+Color frame_3 = lap_innscr;
+Color frame_4 = frame_3;
+Color book_1 = lap_innscr;
+Color book_2 = {247,151,91};
+Color book_3 = book_1;
+Color book_4 = {247,151,91};
 
-    int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy);
+/**COLORS-END**/
 
-    float Xinc = dx / (float) steps;
-    float Yinc = dy / (float) steps;
+/** Structures **/
 
+struct Ract { int x,y,width,height; };
+struct Bar  { int x,y,width,height; Color color; };
+struct Poly { int points[100], n; Color color; };
 
-    float X = X0;
-    float Y = Y0;
-    for (int i = 0; i <= steps; i++)
-    {
-        putpixel (X,Y,color);
-        X += Xinc;
-        Y += Yinc;
-        delay(delayTime);
+/** Structures-END **/
 
-    }
-}
-
-void animatedRectangle(int left, int top, int right, int bottom, int delayTime=0, int color=0)
-{
-    animatedLine(left,top,right,top,delayTime,color);
-    animatedLine(right,top,right,bottom,delayTime,color);
-    animatedLine(right,bottom,left,bottom,delayTime,color);
-    animatedLine(left,bottom,left,top,delayTime,color);
-}
 void background()
 {
-    setfillstyle(1,12);
+    setfillstyle(1,COLOR(bg.r,bg.g,bg.b));
     floodfill(0,0,15);
 }
 
 void desk(int x=72, int y=517)
 {
-    /* Surface Parameter */
-    const int deskWidth=880;
-    const int deskHeight=50;
+    Bar surface = {x, y, 880, 50, white};
+    Bar leg1 = {surface.x+70, surface.y+surface.height, 45, 200, white};
+    Bar leg2 = {surface.x+surface.width-leg1.width-70, surface.y+surface.height, leg1.width, leg1.height, white};
+    Bar space = {leg1.x+leg1.width, leg1.y, surface.width-leg1.width-leg2.width-140, leg1.height, desk_space};
 
-    /* Legs Parameter */
-    const int legWidth=45;
-    const int legHeight=200;
-    const int legX=x+70;
-    const int legY=y+deskHeight;
-    const int legX2=legX+legWidth+650;
-    const int legY2=legY;
+    /** Space **/
+    setfillstyle(1, COLOR(space.color.r, space.color.g, space.color.b));
+     bar(space.x,space.y,space.x+space.width,space.y+space.height);
 
     /** Legs **/
-    setfillstyle(1,15);
-    bar(legX,legY,legX+legWidth,legY+legHeight);
-    bar(legX2,legY2,legX2+legWidth,legY2+legHeight);
+    setfillstyle(1, COLOR(leg1.color.r, leg1.color.g, leg1.color.b));
+    bar(leg1.x,leg1.y,leg1.x+leg1.width,leg1.y+leg1.height);
+    bar(leg2.x,leg2.y,leg2.x+leg2.width,leg2.y+leg2.height);
 
     /** Surface **/
-    setfillstyle(1,15);
-    bar(x,y,x+deskWidth,y+deskHeight);
+    setfillstyle(1,COLOR(surface.color.r, surface.color.g, surface.color.b));
+    bar(surface.x,surface.y,surface.x+surface.width,surface.y+surface.height);
     /* Surface Border */
     setcolor(0);
-    rectangle(x,y,x+deskWidth,y+deskHeight);
+    rectangle(surface.x,surface.y,surface.x+surface.width,surface.y+surface.height);
     /* Surface Shadow */
     setcolor(7);
     for(int i=1; i<4; i++)
-        line(x+i*2,y+deskHeight+i,x+deskWidth-i*2,y+deskHeight+i);
+        line(surface.x+i*2,surface.y+surface.height+i,surface.x+surface.width-i*2,surface.y+surface.height+i);
 }
 
 void laptop(int x=384, int y=319)
 {
-    /* Outer Screen Parameters */
-    const int scrWidth = 256;
-    const int scrHeight = 187;
-
-    /* Inner Screen Parameters */
-    const int innerX = x+5;
-    const int innerY = y+5;
-    const int innerScrWidth = scrWidth-10;
-    const int innerScrHeight = scrHeight-10;
-
-    /* Keyboard Parameters */
-    const int keyboardX= x-35;
-    const int keyboardY= y+scrHeight;
-    const int keyboardWidth = scrWidth+70;
-    const int keyboardHeight = 8;
+    Bar outscr = {x, y, 256, 187, lap_outscr};
+    Bar innscr = {outscr.x+5, outscr.y+5, outscr.width-10, outscr.height-10, lap_innscr};
+    Bar keyboard = {outscr.x-35, outscr.y+outscr.height, outscr.width+70,8, lap_keyboard };
 
     /** Outer Screen **/
-    setfillstyle(1,0);
-    bar(x,y,x+scrWidth,y+scrHeight);
+    setfillstyle(1,COLOR(outscr.color.r,outscr.color.g,outscr.color.b));
+    bar(outscr.x,outscr.y,outscr.x+outscr.width,outscr.y+outscr.height);
 
      /** Inner Screen **/
-    setfillstyle(1,3);
-    bar(innerX,innerY,innerX+innerScrWidth,innerY+innerScrHeight);
+    setfillstyle(1,COLOR(lap_innscr.r,lap_innscr.g,lap_innscr.b));
+    bar(innscr.x,innscr.y,innscr.x+innscr.width,innscr.y+innscr.height);
 
     /** Keyboard Screen **/
-    setfillstyle(1,15);
-    bar(keyboardX,keyboardY,keyboardX+keyboardWidth,keyboardY+keyboardHeight);
+    setfillstyle(1,COLOR(lap_keyboard.r,lap_keyboard.g,lap_keyboard.b));
+    bar(keyboard.x,keyboard.y,keyboard.x+keyboard.width,keyboard.y+keyboard.height);
+
     /* Keyboard Shadow */
-    setcolor(4);
+    setcolor(COLOR(lap_shadow.r,lap_shadow.g,lap_shadow.b));
     for(int i=0; i<6; i++)
-        line(keyboardX+i*2,keyboardY+keyboardHeight+i,keyboardX+keyboardWidth-i*2,keyboardY+keyboardHeight+i);
+        line(keyboard.x+i*2, keyboard.y+keyboard.height+i, keyboard.x+keyboard.width-i*2, keyboard.y+keyboard.height+i);
 
 }
 
@@ -156,7 +140,7 @@ void lamp(int X = 780, int Y = 507)
         stand.x+stand.width/2-20+10-20-20-30+50, stand.y-180-10-20+20+50,   // c6
         stand.x+stand.width/2-20-10, stand.y-180+10                         // c1
     };
-    setfillstyle(1,8);
+    setfillstyle(1,COLOR(23,40,50));
     fillpoly(7,lampCover);
 
     /** Lamp Light **/
@@ -171,7 +155,7 @@ void lamp(int X = 780, int Y = 507)
     setcolor(15);
     ellipse(lightX, lightY,135+10,270+45-10,20,20);
 
-    //getch();
+    getch();
 
     /**--> Light on <--**/
 
@@ -255,43 +239,61 @@ void watch(int x,int y)
     setfillstyle(1,0);
     fillellipse(x,y,5,5);
 
-
     setlinestyle(0,0,3);
     setcolor(0);
     line(x,y,x,y-r+20);
     line(x,y,x+r-40,y);
 }
-void book(int bookX, int bookY, int color,bool reflected = false)
+void book(int x, int y, Color color,bool reflected = false)
 {
-    setfillstyle(1,color);
-    const int bookHeight = 20;
-    const int bookWidth = 120;
-    bar(bookX,bookY,bookX+bookWidth,bookY+bookHeight);
-    setfillstyle(1,15);
+    Bar book = {x, y, 120, 20, color};
+
+    setfillstyle(1,COLOR(book.color.r,book.color.g,book.color.b));
+    bar(book.x, book.y, book.x+book.width, book.y+book.height);
+
+    setfillstyle(1,COLOR(white.r,white.g,white.b));
     if(reflected)
-        bar(bookX,bookY+3,bookX+bookWidth-5,bookY+bookHeight-3);
+        bar(book.x,book.y+3,book.x+book.width-5,book.y+book.height-3);
     else
-        bar(bookX+5,bookY+3,bookX+bookWidth,bookY+bookHeight-3);
+        bar(book.x+5,book.y+3,book.x+book.width,book.y+book.height-3);
+}
+
+void directory(int x, int y, Color color, float angle = 0)
+{
+
+    Bar outbook = {x,y,30,80};
+
+    setfillstyle(1,COLOR(color.r,color.g,color.b));
+    bar(outbook.x, outbook.y, outbook.x+outbook.width, outbook.y-outbook.height);
+
+    setfillstyle(1,COLOR(white.r,white.g,white.b));
+    bar(outbook.x+5, outbook.y-25, outbook.x+outbook.width-5, outbook.y-outbook.height+5);
+    setcolor(COLOR(white.r,white.g,white.b));
+    setlinestyle(0,0,3);
+    line(outbook.x+6, outbook.y-18,outbook.x+outbook.width-6, outbook.y-18);
+    line(outbook.x+6, outbook.y-10,outbook.x+outbook.width-6, outbook.y-10);
 }
 
 void bookshelf(int x, int y)
 {
-    const int width = 300;
-    const int height = 15;
+    Bar stand = {x,y,300,15};
     const int bookX = x+120;
     const int bookY = y-20;
 
     /** Bookshelf Stand **/
     setfillstyle(1,8);//shadow
-    bar(x+2,y+2,x+width+2,y+height+2);
-    setfillstyle(1,15);
-    bar(x,y,x+width,y+height);
+    bar(stand.x+2,stand.y+2,stand.x+stand.width+2,stand.y+stand.height+2);
+
+    setfillstyle(1,COLOR(white.r,white.g,white.b));
+    bar(stand.x,stand.y,stand.x+stand.width,stand.y+stand.height);
 
     /** BOOKS **/
-    book(bookX,bookY,4);
-    book(bookX-20,bookY-20,6);
-    book(bookX+25,bookY-40,3,true);
-    book(bookX-25,bookY-60,1);
+    book(bookX,bookY,book_1);
+    book(bookX-20,bookY-20,book_2);
+    book(bookX+25,bookY-40,book_3,true);
+    book(bookX-25,bookY-60,book_4);
+
+    //directory(stand.x+20,stand.y,book_1);
 
     /** Directory **/
     const int directoryX = bookX-25+2;
@@ -322,45 +324,43 @@ void bookshelf(int x, int y)
      setlinestyle(0,0,3);
     line(directoryX-30-20-5,directoryY-15+11+40+10,directoryX-30-20+20-5,directoryY-15+11+40+10+10);
     line(directoryX-30-20-10,directoryY-15+11+40+20,directoryX-30-20+20-10,directoryY-15+11+40+10+20);
-
 }
-void frame(int x,int y,int color,float scaleX=1,float scaleY=1)
+
+void frame(int x, int y, Color color, float scaleX=1, float scaleY=1)
 {
-    const int width = (int)70*scaleX;
-    const int height = (int)90*scaleY;
-    setfillstyle(1,0);
-    bar(x,y,x+width,y+height);
-    setfillstyle(1,color);
-    bar(x+5,y+5,x+width-5,y+height-5);
+    Bar outframe = {x,y,(int)70*scaleX, (int)90*scaleY, frame_out};
+    Bar innframe = {outframe.x+5, outframe.y+5, outframe.width-10,outframe.height-10, color};
 
-    setlinestyle(0,0,1);
-    setcolor(0);
-    setfillstyle(1,0);
-    fillellipse(x+width/2, y-width/4,4,4);
+    Poly hanger = {{
+        outframe.x+outframe.width/2, outframe.y-outframe.width/4,
+        outframe.x+outframe.width/4,outframe.y,
+        outframe.x+outframe.width-outframe.width/4,outframe.y,
+        outframe.x+outframe.width/2, outframe.y-outframe.width/4
+    },4};
 
-    int holder[] = {
-        x+width/2, y-width/4,
-        x+width/4,y,
-        x+width-width/4,y,
-        x+width/2, y-width/4,
-    };
-    setlinestyle(0,0,2);
-    drawpoly(4,holder);
+    /** Outer Frame **/
+    setfillstyle(1,COLOR(outframe.color.r,outframe.color.g,outframe.color.b));
+    bar(outframe.x,outframe.y,outframe.x+outframe.width,outframe.y+outframe.height);
 
+    /** Hanger **/
+    setcolor(COLOR(outframe.color.r,outframe.color.g,outframe.color.b));
+    fillellipse(outframe.x+outframe.width/2, outframe.y-outframe.width/4,4,4);
+    drawpoly(hanger.n,hanger.points);
 
+    /** Inner Frame **/
+    setfillstyle(1,COLOR(innframe.color.r,innframe.color.g,innframe.color.b));
+    bar(innframe.x,innframe.y,innframe.x+innframe.width,innframe.y+innframe.height);
 }
 void frameSet()
 {
-    frame(100,100,3);
-    frame(80,265,2,3,1.4);
-    frame(getmaxx()-180,150,9,1.2,1.2);
-    frame(getmaxx()-80,250,3,0.8,0.8);
-
+    frame(80,265,frame_1,3,1.4); //1
+    frame(getmaxx()-180,150,frame_2,1.2,1.2); //2
+    frame(100,100,frame_3); //3
+    frame(getmaxx()-80,250,frame_4,0.8,0.8); //4
 }
 int main()
 {
-    CustomGraphics cg1;
-    cout<<cg1.isWorking();
+
     int gd=6, gm=1;
     initgraph(&gd, &gm,"");
     background();
@@ -370,14 +370,7 @@ int main()
     const int noteX = laptopX+40, noteY = laptopY-85;
     int delayTime = 200;
 
-    setbkcolor(12);
-    setcolor(0);
-    settextstyle(10, HORIZ_DIR, 5);
-    outtextxy(getmaxx()/4+50,getmaxy()/2-50,"Press any key...");
-    animatedRectangle(getmaxx()/4+50-20,getmaxy()/2-50-20,getmaxx()/4+50+450,getmaxy()/2-50+50,.2,0);
-
-    getch();
-    cleardevice();
+    setbkcolor(COLOR(bg.r,bg.g,bg.b));
 
     delay(delayTime);
     desk(deskX,deskY);
