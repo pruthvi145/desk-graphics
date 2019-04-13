@@ -1,28 +1,36 @@
 #include <graphics.h>
-#include<iostream>
-
-using namespace std;
 
 /** COLORS **/
 
 struct Color { int r,g,b; };
 
 Color white = {255,255,255};
+Color dark_blue = {23,40,53};
+Color dark_blue2 = {41,72,94};
+Color light_blue = {0,204,167};
+Color yellow = {255,255,0};
+Color light_red = {246,109,102};
+Color light_red2 = {224,103,97};
+
 Color desk_space = {238,239,240};
+Color desk_shadow = {218,219,219};
+Color desk_shadow2 = {233,233,233};
+
 Color bg = {243,205,162};
-Color lap_outscr = {23,40,53};
-Color lap_innscr = {0,204,167};
+Color lap_outscr = dark_blue;
+Color lap_innscr = light_blue;
 Color lap_keyboard = {246,240,223};
 Color lap_shadow = {77,31,18};
-Color frame_out = lap_outscr;
-Color frame_1 = {246,109,102};
-Color frame_2 = frame_1;
-Color frame_3 = lap_innscr;
-Color frame_4 = frame_3;
-Color book_1 = lap_innscr;
+Color frame_out = dark_blue;
+Color frame_1 = light_red;
+Color frame_2 = light_red;
+Color frame_3 = light_blue;
+Color frame_4 = light_blue;
+Color book_1 = light_blue;
 Color book_2 = {247,151,91};
-Color book_3 = book_1;
+Color book_3 = light_blue;
 Color book_4 = {247,151,91};
+Color temp = {255,4,0};
 
 /**COLORS-END**/
 
@@ -56,16 +64,55 @@ void desk(int x=72, int y=517)
     bar(leg1.x,leg1.y,leg1.x+leg1.width,leg1.y+leg1.height);
     bar(leg2.x,leg2.y,leg2.x+leg2.width,leg2.y+leg2.height);
 
+    /* Surface Shadow */
+        int shadow[] = {
+        leg1.x+leg1.width, leg1.y,
+        leg2.x, leg1.y,
+        leg2.x, leg1.y+30,
+        leg1.x+leg1.width, leg1.y+60,
+        leg1.x+leg1.width,leg1.y
+    };
+    int shadowl1[] = {
+        leg1.x, leg1.y,
+        leg1.x+leg1.width, leg1.y,
+        leg1.x+leg1.width, leg1.y+60,
+        leg1.x, leg1.y+60+2,
+        leg1.x, leg1.y
+    };
+    int shadowl2[] = {
+        leg2.x, leg2.y,
+        leg2.x+leg2.width, leg2.y,
+        leg2.x+leg2.width, leg2.y+27,
+        leg2.x, leg2.y+30,
+        leg2.x, leg2.y
+    };
+
+    setcolor(COLOR(desk_shadow.r,desk_shadow.g,desk_shadow.b));
+    setfillstyle(1,COLOR(desk_shadow.r,desk_shadow.g,desk_shadow.b));
+    fillpoly(5,shadow);
+
+    setcolor(COLOR(desk_shadow.r,desk_shadow.g,desk_shadow.b));
+    setfillstyle(1,COLOR(desk_shadow2.r,desk_shadow2.g,desk_shadow2.b));
+    fillpoly(5,shadowl1);
+    fillpoly(5,shadowl2);
+
     /** Surface **/
     setfillstyle(1,COLOR(surface.color.r, surface.color.g, surface.color.b));
     bar(surface.x,surface.y,surface.x+surface.width,surface.y+surface.height);
     /* Surface Border */
     setcolor(0);
     rectangle(surface.x,surface.y,surface.x+surface.width,surface.y+surface.height);
-    /* Surface Shadow */
-    setcolor(7);
-    for(int i=1; i<4; i++)
-        line(surface.x+i*2,surface.y+surface.height+i,surface.x+surface.width-i*2,surface.y+surface.height+i);
+
+    setbkcolor(COLOR(desk_space.r,desk_space.g,desk_space.b));
+    settextjustify(CENTER_TEXT, CENTER_TEXT);
+    settextstyle(8,HORIZ_DIR,3);
+    outtextxy((leg1.x+leg1.width+leg2.x)/2,leg1.y+100, "Created BY: PRUTHVI PATEL");
+    outtextxy((leg1.x+leg1.width+leg2.x)/2,leg1.y+130, "ID: 17103487");
+
+    settextstyle(2,HORIZ_DIR,5);
+    setcolor(4);
+    settextjustify(RIGHT_TEXT, BOTTOM_TEXT);
+    outtextxy(leg2.x-20,leg1.y+leg2.height, "*Press any key to turn on lamp...");
 }
 
 void laptop(int x=384, int y=319)
@@ -95,27 +142,22 @@ void laptop(int x=384, int y=319)
 
 void lamp(int X = 780, int Y = 507)
 {
-    struct Stand
-    {
-        const int x;
-        const int y;
-        const int width;
-        const int height;
-    };
+    Bar stand = {X,Y,75,10,dark_blue};
 
-    Stand stand = {X,Y,75,10};
     /** Lamp Stand **/
     setfillstyle(1,0);
+    setlinestyle(0,0,1);
     bar(stand.x,stand.y,stand.x+stand.width,stand.y+stand.height);
     /* stand - round corners */
     setcolor(0);
-    circle(stand.x,stand.y+stand.height/2,stand.height/2); // corner 1
-    floodfill(stand.x-1,stand.y+stand.height/2,0);
-    circle(stand.x+stand.width,stand.y+stand.height/2,stand.height/2); //corner 2
-    floodfill(stand.x+stand.width+1,stand.y+stand.height/2,0);
+    arc(stand.x,stand.y+stand.height/2,90,270,stand.height/2); // corner 1
+    arc(stand.x+stand.width,stand.y+stand.height/2,270,90,stand.height/2); //corner 2
+    floodfill(stand.x-2,stand.y+stand.height/2,0);
+    floodfill(stand.x+stand.width+2,stand.y+stand.height/2,0);
 
     /** Lamp supporter **/
-    for(int i=0;i<3;i++)
+    setlinestyle(0,0,3);
+    for(int i=0;i<2;i++)
     {
         line(stand.x+stand.width/2+i, stand.y, stand.x + stand.width/2+i, stand.y-10); //LmpS1
 
@@ -126,8 +168,6 @@ void lamp(int X = 780, int Y = 507)
 
         line(stand.x+stand.width-5, stand.y-100+i, stand.x+stand.width+10+5, stand.y-100+i);//LmpS4
     }
-
-    setlinestyle(0,0,3);
     line(stand.x+stand.width+5, stand.y-100, stand.x+stand.width/2-20, stand.y-180); //LmpS5
 
     /** Lamp Cover **/
@@ -140,7 +180,7 @@ void lamp(int X = 780, int Y = 507)
         stand.x+stand.width/2-20+10-20-20-30+50, stand.y-180-10-20+20+50,   // c6
         stand.x+stand.width/2-20-10, stand.y-180+10                         // c1
     };
-    setfillstyle(1,COLOR(23,40,50));
+    setfillstyle(1,COLOR(dark_blue.r,dark_blue.g,dark_blue.b));
     fillpoly(7,lampCover);
 
     /** Lamp Light **/
@@ -148,33 +188,38 @@ void lamp(int X = 780, int Y = 507)
     const int lightY =stand.y-180-10-20+20 + 25; // y = (c5+c6)/2
 
     /**--> Light off <--**/
+    setcolor(0);
     setfillstyle(1,15);
+    setlinestyle(0,0,3);
     ellipse(lightX, lightY,135+10,270+45-10,20,20);
-    floodfill(lightX-2,lightY+2,0);
+    floodfill(lightX-5,lightY+5,0);
     /* Border */
     setcolor(15);
-    ellipse(lightX, lightY,135+10,270+45-10,20,20);
+    arc(lightX-1, lightY,135+10,270+45-10,20);
+    arc(lightX, lightY,135+10,270+45-10,20);
 
     getch();
 
     /**--> Light on <--**/
 
-    setfillstyle(1,14);
+    setfillstyle(1,COLOR(yellow.r,yellow.g,yellow.b));
     setcolor(0);
     arc(lightX, lightY,135+10,270+45-10,20);
     floodfill(lightX-2,lightY+2,0);
      /**----> Light on Animation <----**/
     setlinestyle(0,0,1);
-    int color = 14;
+    Color color = temp;
+    bool isBg = false;
     for(int j=1;j<=5;j++)
     {
-        setcolor(color);
+        setcolor(COLOR(color.r,color.g,color.b));
         for(int i=5;i<25;i+=5)
         {
             delay(100);
             arc(lightX, lightY,135+10,270+45-10,20+i);
         }
-        color = (color==14)?12 : 14;
+        color = (isBg) ? temp : bg;
+        isBg = (isBg) ? false : true;
     }
 
 }
@@ -208,9 +253,9 @@ void note(int x=384+40, int y=317-80, int color=3)
     setcolor(3);
     drawpoly(4,corner);
 
-     setfillstyle(1,12);
+     setfillstyle(1,COLOR(bg.r,bg.g,bg.b));
     fillpoly(4,nonCorner);
-    setcolor(12);
+    setcolor(COLOR(bg.r,bg.g,bg.b));
     drawpoly(4,nonCorner);
 }
 void photo(int x, int y)
@@ -221,9 +266,10 @@ void photo(int x, int y)
     bar(x+2, y+2, x+width+2, y+height+2);
     setfillstyle(1,15);
     bar(x, y, x+width, y+height);
-    setfillstyle(1,1);
+    setfillstyle(1,COLOR(dark_blue2.r,dark_blue2.g,dark_blue2.b));
     bar(x+10,y+10,x+width-10,y+height-15);
     setcolor(0);
+    setlinestyle(0,0,1);
     circle(x+width/2,y,4);
     setfillstyle(1,0);
     floodfill(x+width/2,y-2,0);
@@ -232,15 +278,15 @@ void photo(int x, int y)
 void watch(int x,int y)
 {
     int r = 80;
-    setfillstyle(1,0);
+    setfillstyle(1,COLOR(dark_blue.r,dark_blue.g,dark_blue.b));
     fillellipse(x,y,r,r);
     setfillstyle(1,15);
     fillellipse(x,y,r-5,r-5);
-    setfillstyle(1,0);
+    setfillstyle(1,COLOR(dark_blue.r,dark_blue.g,dark_blue.b));
     fillellipse(x,y,5,5);
 
     setlinestyle(0,0,3);
-    setcolor(0);
+    setcolor(COLOR(dark_blue.r,dark_blue.g,dark_blue.b));
     line(x,y,x,y-r+20);
     line(x,y,x+r-40,y);
 }
@@ -256,22 +302,6 @@ void book(int x, int y, Color color,bool reflected = false)
         bar(book.x,book.y+3,book.x+book.width-5,book.y+book.height-3);
     else
         bar(book.x+5,book.y+3,book.x+book.width,book.y+book.height-3);
-}
-
-void directory(int x, int y, Color color, float angle = 0)
-{
-
-    Bar outbook = {x,y,30,80};
-
-    setfillstyle(1,COLOR(color.r,color.g,color.b));
-    bar(outbook.x, outbook.y, outbook.x+outbook.width, outbook.y-outbook.height);
-
-    setfillstyle(1,COLOR(white.r,white.g,white.b));
-    bar(outbook.x+5, outbook.y-25, outbook.x+outbook.width-5, outbook.y-outbook.height+5);
-    setcolor(COLOR(white.r,white.g,white.b));
-    setlinestyle(0,0,3);
-    line(outbook.x+6, outbook.y-18,outbook.x+outbook.width-6, outbook.y-18);
-    line(outbook.x+6, outbook.y-10,outbook.x+outbook.width-6, outbook.y-10);
 }
 
 void bookshelf(int x, int y)
@@ -357,6 +387,16 @@ void frameSet()
     frame(getmaxx()-180,150,frame_2,1.2,1.2); //2
     frame(100,100,frame_3); //3
     frame(getmaxx()-80,250,frame_4,0.8,0.8); //4
+
+    setcolor(COLOR(light_red2.r,light_red2.g,light_red2.b));
+    setfillstyle(1,COLOR(light_red2.r,light_red2.g,light_red2.b));
+    fillellipse(80+170,265+40,10,10);
+    fillellipse(80+140,265+60,15,15);
+    fillellipse(80+90,265+60,8,8);
+    fillellipse(80+100,265+30,5,5);
+    fillellipse(80+40,265+50,5,5);
+    fillellipse(80+130,265+100,5,5);
+    fillellipse(80+70,265+90,10,10);
 }
 int main()
 {
@@ -364,35 +404,51 @@ int main()
     int gd=6, gm=1;
     initgraph(&gd, &gm,"");
     background();
+
     const int deskX = 72, deskY = 517;
     const int laptopX = deskX + 312, laptopY = deskY - 200;
     const int lampX = deskX + 708, lampY = deskY - 10;
     const int noteX = laptopX+40, noteY = laptopY-85;
     int delayTime = 200;
 
-    setbkcolor(COLOR(bg.r,bg.g,bg.b));
-
-    delay(delayTime);
     desk(deskX,deskY);
     delay(delayTime);
+
     laptop(laptopX,laptopY);
     delay(delayTime);
+
     note(noteX,noteY,3);
     delay(delayTime);
-    note(noteX+100,noteY+20,4);
+
+    note(noteX+100,noteY+20,12);
     delay(delayTime);
+
     photo(deskX+40,deskY-100);
     delay(delayTime);
+
     photo(deskX+90,deskY-80);
     delay(delayTime);
+
     watch(getmaxx()-350,150);
     delay(delayTime);
+
     bookshelf(deskX+150, noteY-50);
     delay(delayTime);
+
     frameSet();
     delay(delayTime);
-    lamp(lampX,lampY);
 
+
+    setcolor(COLOR(dark_blue2.r,dark_blue2.g,dark_blue2.b));
+    settextjustify(CENTER_TEXT, CENTER_TEXT);
+    settextstyle(10,HORIZ_DIR,4);
+    outtextxy(laptopX+50,laptopY+55,"COMPUTER");
+    outtextxy(laptopX+90,laptopY+92,"GRAPHICS");
+
+    settextstyle(8,HORIZ_DIR,1);
+    setbkcolor(COLOR(light_blue.r,light_blue.g,light_blue.b));
+    outtextxy(laptopX+100,laptopY+120,"with c++");
+    lamp(lampX,lampY);
     getch();
     closegraph();
     return 0;
