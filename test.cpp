@@ -241,22 +241,7 @@ int  main()
     initwindow(1000,1000,"My Window");
 
 
-    float a[][2] = {
-        {100,100},
-        {300,100},
-        {300,300},
-        {100,300},
-    };
-    for(int i=0; i<4; i++)
-    {
-        for(int j=0; j<2; j++)
-        {
-            cout<<a[i][j]<<"\t";
-        }
-        cout<<endl;
-    }
-     //Ractangle(a[0][0],a[0][1],a[2][0],a[2][1]);
-    rotate(a,4,0,0,60);
+    fun();
 
     getch();
     closegraph();

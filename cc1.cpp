@@ -51,22 +51,8 @@ int main(void)
 
 {
 
-    // Maximum x and y pixel coordinates
-
-            // Coordinates of the mouse click
-
-
-    // Put the machine into graphics mode and get the maximum coordinates:
-
     initwindow(1200, 720);
-
      brush();
-
-
-
-
-    // Switch back to text mode:
-
     closegraph( );
 
 }
